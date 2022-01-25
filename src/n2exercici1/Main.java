@@ -1,51 +1,89 @@
-package n1exercici3;
+package n2exercici1;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.Arrays;
+import java.util.Properties;
 
 public class Main {
 
 	public static void main(String[] args) {
 		
-		//directori per llegir
+		//llegim el fitxer properties
 		
+		String directori;
+		String nomFitxer;
+		String directoriFitxer;
+		
+		Properties propietats = new Properties();
+		FileInputStream dades;
+		try {
+			dades = new FileInputStream("./src/n2exercici1/arxiu.properties");
+			propietats.load(dades);
+			directori=propietats.getProperty("directori");
+			nomFitxer=propietats.getProperty("nomFitxer");
+			directoriFitxer=propietats.getProperty("directoriFitxer");
+			dades.close();
+			
+			guardaFitxer(directori, nomFitxer, directoriFitxer);			
+			
+		} catch (FileNotFoundException e) {
+			System.out.println("No trobo el fitxer de configuració");
+		}catch (IOException e2) {
+			System.out.println("No puc llegir el fitxer de configuració");
+		}
+						
+	}
+	
+	//mètode que donat un directori, un fitxer i un directori desti, 
+	//escriu el llistat del directori en aquest fitxer i ho guarda al directori de desti
+	
+	static void guardaFitxer(String directori, String nomFitxer, String directoriFitxer) {
 		String rutaCarpeta;
 		
-		if(args.length==0) {
+		if(directori.equals("")) {
 			//si no té argument mostro l'arrel del projecte
 			rutaCarpeta=System.getProperty("user.dir");
 			System.out.println("user.dir");
 		}else {
-			rutaCarpeta=args[0];
+			rutaCarpeta=directori;
 		}
 		
 		//pot no existir el directori que pasem
 		try {
 			File ruta = new File(rutaCarpeta);
+			
+			
 			//per cridar el mètode per primera vegada el faig amb una cadena vuida
 			String textFinal = llistaDirectori(ruta,"");
-			//creo el fitxer i l'escric
-			File fitxer = new File(rutaCarpeta+"/llistat.txt");
+			
+			
+			//creo el fitxer i l'escric respecte el que posa al fitxer de configuració
+			File fitxer = new File(directoriFitxer,nomFitxer);
+						
 			fitxer.createNewFile();
-			escriure(fitxer.getAbsolutePath(), textFinal);
+			
+			escriureFitxer(fitxer.getCanonicalPath(), textFinal);
+		
 			
 		}catch(NullPointerException e) {
 			System.out.println("No existeix el directori");
 		}catch (IOException e) {
 			e.printStackTrace();
-		}
-						
+		}	
 	}
-
+	
+	
 	//metode que donat un directori llista el contingut, inclos el dels subdirectoris
 	static String llistaDirectori (File ruta, String text){
-	
+		
 		File[] fitxers = ruta.listFiles();
 		Arrays.sort(fitxers);
-		
+	
 		for (int i = 0; i<fitxers.length; i++) {
 			
 			//vaig concatenant els fitxers
@@ -77,7 +115,7 @@ public class Main {
 	}
 	
 	//mètode per escriure el contingut d'un string en un fitxer donat
-	static void escriure(String ruta_fitxer, String text) {
+	static void escriureFitxer(String ruta_fitxer, String text) {
 		
 		try {
 			FileWriter escritor = new FileWriter(ruta_fitxer);

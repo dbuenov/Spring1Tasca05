@@ -1,25 +1,40 @@
 package n1exercici1;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class Main {
 
 	public static void main(String[] args) {
-		
-		File ruta = new File("C:/Test");
-		new LlistaDirectori(ruta);		
-			
+
+		String rutaCarpeta;
+
+		// miro l'argument del main
+		if (args.length == 0) {
+			rutaCarpeta = System.getProperty("user.dir");
+		} else {
+			rutaCarpeta = args[0];
+		}
+
+		// pot no existir el directori que pasem
+		try {
+			File ruta = new File(rutaCarpeta);
+			llistaDirectori(ruta);
+		} catch (NullPointerException e) {
+			System.out.println("No existeix el directori");
+		}
+
 	}
 
-}
+	//metode que donat un directori ens llista el contingut alfabeticament
 
-//clase que donat un directori en llista el contingut
-class LlistaDirectori{
-	LlistaDirectori(File ruta){
-		String[] nombres = ruta.list();
-		
-		for (String string : nombres) {
-			System.out.println(string);
+	static void llistaDirectori(File ruta) {
+
+		File[] fitxers = ruta.listFiles();
+		Arrays.sort(fitxers);
+
+		for (File fitxer : fitxers) {
+			System.out.println(fitxer.getName());
 		}
 	}
 }
